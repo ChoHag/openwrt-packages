@@ -44,10 +44,12 @@ CONFIGULE_ARGS += \
 	--with-srv-lease-file=/etc/dhcpd.leases \
 	--with-srv6-lease-file=/etc/dhcpd6.leases
 
+CONFIGURE_VARS += ac_cv_file__dev_random=set
+
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
-		 DESTDIR="$(PKG_INSTALL_DIR)" \
-		-D_GNU_SOURCE \
+		DESTDIR="$(PKG_INSTALL_DIR)" \
+		CFLAGS=-D_GNU_SOURCE \
 		all install
 endef
 
@@ -65,10 +67,11 @@ endef
 define Package/dhcp-server/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/sbin/dhcpd $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/omshell $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/dhcpd $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/omshell $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/dhcpd.init $(1)/etc/init.d/dhcpd
+	$(INSTALL_BIN) ./files/dhcpd6.init $(1)/etc/init.d/dhcpd6
 endef
 
 $(eval $(call BuildPackage,dhcp-client))
