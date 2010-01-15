@@ -1,19 +1,19 @@
 #!/bin/sh /etc/rc.common
 START=60
 
-lease_file=/etc/dhcpd.leases
-config_file=/etc/dhcpd.conf
-pid_file=/var/run/dhcpd.pid
+lease_file=/etc/dhcpd6.leases
+config_file=/etc/dhcpd6.conf
+pid_file=/var/run/dhcpd6.pid
 
 start() {
-	echo Starting isc-dhcpd
+	echo Starting isc-dhcpd6
 
 	if [ ! -e $lease_file ]; then
 		echo "  Creating $lease_file"
 		touch $lease_file
 	fi
 	
-	/usr/sbin/dhcpd -4 -q -cf $config_file -lf $lease_file
+	/usr/sbin/dhcpd -6 -q -cf $config_file -lf $lease_file
 	
 	if [ $? -ne 0 ]; then
 		echo "  isc-dhcpd failed to start"
@@ -21,13 +21,13 @@ start() {
 }
 
 stop() {
-	echo "Stopping isc-dhcpd"
+	echo "Stopping isc-dhcpd6"
 	if [ -e $pid_file ]; then
 		kill `cat $pid_file`
 
 		if [ $? -ne 0 ]; then
 			echo "  PID " `cat $pid_file` not found
-			echo "  Is the DHCP server running?"
+			echo "  Is the DHCPv6 server running?"
 		fi
 	
 		rm $pid_file
